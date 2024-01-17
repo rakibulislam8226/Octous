@@ -1,0 +1,17 @@
+.idea
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+env
+venv
+.env
+
+local_settings.py
+db.sqlite3
+
+Media/
+
+src/*/__pycache__/
+src/*/*/__pycache__/
