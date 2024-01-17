@@ -1,3 +1,5 @@
+from django.contrib.auth.password_validation import validate_password
+
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 
@@ -34,6 +36,7 @@ class AccountCreationSerializer(serializers.ModelSerializer):
     phone = serializers.CharField(max_length=15, write_only=True)
     email = serializers.EmailField(required=True)
     password = serializers.CharField(write_only=True, required=True)
+    confirm_password = serializers.CharField(write_only=True, required=True)
 
     class Meta:
         model = User
@@ -41,6 +44,7 @@ class AccountCreationSerializer(serializers.ModelSerializer):
             "phone",
             "email",
             "password",
+            "confirm_password",
         )
 
     def validate_phone(self, value):
@@ -52,6 +56,17 @@ class AccountCreationSerializer(serializers.ModelSerializer):
         if User.objects.filter(email=value).exists():
             raise ValidationError("A user with this email already exists.")
         return value
+
+    def validate_password(self, value):
+        validate_password(value)
+        return value
+
+    def validate(self, data):
+        if data["password"] != data["confirm_password"]:
+            raise serializers.ValidationError(
+                {"confirm_password": "Password fields didn't match."}
+            )
+        return data
 
     def create(self, validated_data):
         user = User.objects.create(
