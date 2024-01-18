@@ -62,6 +62,8 @@ THIRD_PARTY_APPS = [
 
 PROJECT_APPS = [
     "core.apps.CoreConfig",
+    "account.apps.AccountConfig",
+    "threadio.apps.ThreadioConfig",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + PROJECT_APPS
