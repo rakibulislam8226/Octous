@@ -43,6 +43,7 @@ ALLOWED_HOSTS = ["*"]
 # Application definition
 
 DJANGO_APPS = [
+    "daphne",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -64,6 +65,7 @@ PROJECT_APPS = [
     "core.apps.CoreConfig",
     "account.apps.AccountConfig",
     "threadio.apps.ThreadioConfig",
+    "mediaroomio.apps.MediaroomioConfig",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + PROJECT_APPS
@@ -100,7 +102,8 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "config.wsgi.application"
+# WSGI_APPLICATION = "config.wsgi.application"
+ASGI_APPLICATION = "config.asgi.application"
 
 
 # Database
