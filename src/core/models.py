@@ -1,13 +1,11 @@
+from autoslug import AutoSlugField
+from django.contrib.auth.models import AbstractUser, PermissionsMixin
 from django.db import models
 from django.utils import timezone
-from django.contrib.auth.models import AbstractUser, PermissionsMixin
-
-from autoslug import AutoSlugField
 from phonenumber_field.modelfields import PhoneNumberField
 from versatileimagefield.fields import VersatileImageField
 
 from common.models import BaseModelWithUID
-
 from .choices import UserStatus, UserGender, BloodGroups
 from .managers import CustomUserManager
 from .utils import get_user_slug, get_user_media_path_prefix

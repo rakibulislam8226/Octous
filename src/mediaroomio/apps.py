@@ -1,9 +1,9 @@
 from django.apps import AppConfig
 
 
-class ThreadioConfig(AppConfig):
+class MediaroomioConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
-    name = "threadio"
+    name = "mediaroomio"
 
     def ready(self):
-        from threadio import signals
+        from . import signals
