@@ -1,6 +1,5 @@
 from django.contrib.auth import get_user_model
 from django.db import models
-from django.db.models import Q, UniqueConstraint
 
 from versatileimagefield.fields import PPOIField
 
@@ -8,7 +7,6 @@ from common.models import BaseModelWithUID
 
 from versatileimagefield.fields import VersatileImageField
 
-from .choices import MediaKindChoices
 
 User = get_user_model()
 
