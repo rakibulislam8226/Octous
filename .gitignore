@@ -15,3 +15,7 @@ Media/
 
 src/*/__pycache__/
 src/*/*/__pycache__/
+src/media
+src/media/*
+identifier.sqlite
+src/db.sqlite3

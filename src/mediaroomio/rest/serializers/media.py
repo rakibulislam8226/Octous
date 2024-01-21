@@ -10,9 +10,6 @@ class MediaRoomSerializer(serializers.ModelSerializer):
             "uid",
             "image",
             "file",
-            "type",
-            "twilio_composition_sid",
-            "twilio_video",
             "created_at",
             "updated_at",
         ]
@@ -27,6 +24,5 @@ class MediaRoomConnectorSerializer(serializers.ModelSerializer):
         fields = [
             "uid",
             "media_room",
-            "type",
         ]
         read_only_fields = fields

@@ -1,6 +1,7 @@
 from autoslug import AutoSlugField
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.db.models import UniqueConstraint, Q
 
 from common.models import BaseModelWithUID
 from threadio.choices import (
@@ -33,6 +34,20 @@ class Group(BaseModelWithUID):
         blank=True,
         help_text="If group is ban, admin should give time when it will active again.",
     )
+    is_group = models.BooleanField(default=False)
+    participants = models.ManyToManyField(
+        User, through="threadio.GroupParticipant", related_name="chat_groups"
+    )
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(
+                fields=["name"],
+                condition=~Q(name=""),
+                name="group_name_must_be_uniuqe",
+                violation_error_message="Group name must be unique.",
+            )
+        ]
 
 
 class GroupParticipant(BaseModelWithUID):
@@ -49,6 +64,9 @@ class GroupParticipant(BaseModelWithUID):
         default=GroupParticipantRoleChoices.PUBLIC,
     )
     last_seen = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        unique_together = ("group", "user")
 
 
 class Thread(BaseModelWithUID):

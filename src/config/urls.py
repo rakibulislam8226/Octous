@@ -17,7 +17,7 @@ from rest_framework_simplejwt.views import (
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path('api-auth/', include('rest_framework.urls')),
+    path("api-auth/", include("rest_framework.urls")),
     # Optional UI:
     path(
         "api/docx",
@@ -47,6 +47,7 @@ urlpatterns = [
         name="token_verify",
     ),
     # core
+    path("api/v1/groups", include("threadio.rest.urls.groups")),
     path("api/v1", include("core.rest.urls")),
     # account
 ]
