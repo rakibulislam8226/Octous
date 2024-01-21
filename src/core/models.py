@@ -54,10 +54,14 @@ class User(AbstractUser, BaseModelWithUID, PermissionsMixin):
     def __str__(self):
         return f"UID: {self.uid}, Phone: {self.phone}"
 
+    def delete(self, using=None, keep_parents=False):
+        self.deleted_at = timezone.now()
+        self.is_deleted = True
+        self.save()
+
     def save(self, *args, **kwargs):
         if not self.pk:
-            self.date_joined = timezone.now()
-        self.username = self.phone
+            self.username = self.phone
         super().save(*args, **kwargs)
 
 

@@ -21,6 +21,20 @@ load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+STATIC_DIR = os.path.realpath(os.path.join(BASE_DIR, "staticfiles"))
+# The directory where different applications uploads media files to
+# This can/should be located at ~/media, preferrably outside the git repo
+MEDIA_DIR = os.path.realpath(os.path.join(BASE_DIR, "media"))
+
+
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/1.8/howto/static-files/
+
+STATIC_ROOT = STATIC_DIR
+STATIC_URL = "/static/"
+
+MEDIA_ROOT = MEDIA_DIR
+MEDIA_URL = "/media/"
 
 
 # Quick-start development settings - unsuitable for production

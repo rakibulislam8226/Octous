@@ -18,6 +18,7 @@ class UserAdmin(UserAdmin):
     list_display = [
         "phone",
         "email",
+        "uid",
         "special_pin",
     ]
     list_filter = UserAdmin.list_filter + ("status",)
