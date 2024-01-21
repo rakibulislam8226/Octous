@@ -10,8 +10,8 @@ from core.models import User
 from core.rest.serializers.users import UserMinSerializer
 from mediaroomio.models import MediaRoom
 from mediaroomio.rest.serializers.media import MediaRoomSerializer
-from threadio.choices import GroupParticipantRoleChoices
-from threadio.models import Group, GroupParticipant
+from threadio.choices import GroupParticipantRoleChoices, GroupParticipantChoices
+from threadio.models import ChatGroup, ChatGroupParticipant
 
 
 class GroupListSerializer(serializers.ModelSerializer):
@@ -45,7 +45,7 @@ class GroupListSerializer(serializers.ModelSerializer):
         return participants_user_instance
 
     class Meta:
-        model = Group
+        model = ChatGroup
         fields = [
             "name",
             "uid",
@@ -66,7 +66,7 @@ class GroupListSerializer(serializers.ModelSerializer):
         read_only_fields = ["slug", "uid", "created_at", "updated_at"]
 
     def validate_name(self, data):
-        if Group.objects.filter(name=data).exclude(name="").exists():
+        if ChatGroup.objects.filter(name=data).exclude(name="").exists():
             raise ValidationError(detail="Group with this name already exists")
         return data
 
@@ -80,12 +80,29 @@ class GroupListSerializer(serializers.ModelSerializer):
             validated_data["banner"] = MediaRoom.objects.create(image=banner)
 
         validated_data["created_by"] = current_user
-        instance: Group = super().create(validated_data)
-        GroupParticipant.objects.create(
+
+        # create chat group
+        instance: ChatGroup = super().create(validated_data)
+
+        # add the owner(current user) of this group as role owner
+        ChatGroupParticipant.objects.create(
             group=instance,
             user=current_user,
+            status=GroupParticipantChoices.ACTIVE,
             role=GroupParticipantRoleChoices.OWNER,
         )
 
-        instance.participants.add(*participants)
+        # add other selected members in this group
+        ChatGroupParticipant.objects.bulk_create(
+            [
+                ChatGroupParticipant(
+                    user=user, group=instance, status=GroupParticipantChoices.ACTIVE
+                )
+                for user in participants
+                if not ChatGroupParticipant.objects.filter(
+                    user=user, group=instance
+                ).exists()
+            ]
+        )
+
         return instance

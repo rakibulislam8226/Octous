@@ -13,7 +13,7 @@ from threadio.choices import (
 User = get_user_model()
 
 
-class Group(BaseModelWithUID):
+class ChatGroup(BaseModelWithUID):
     name = models.CharField(max_length=220, blank=True)
     slug = AutoSlugField(
         populate_from="name",
@@ -36,7 +36,7 @@ class Group(BaseModelWithUID):
     )
     is_group = models.BooleanField(default=False)
     participants = models.ManyToManyField(
-        User, through="threadio.GroupParticipant", related_name="chat_groups"
+        User, through="threadio.ChatGroupParticipant", related_name="chat_groups"
     )
 
     class Meta:
@@ -50,8 +50,8 @@ class Group(BaseModelWithUID):
         ]
 
 
-class GroupParticipant(BaseModelWithUID):
-    group = models.ForeignKey(Group, on_delete=models.CASCADE)
+class ChatGroupParticipant(BaseModelWithUID):
+    group = models.ForeignKey(ChatGroup, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.RESTRICT)
     status = models.CharField(
         max_length=20,
@@ -77,13 +77,13 @@ class Thread(BaseModelWithUID):
     sender = models.ForeignKey(
         User, on_delete=models.PROTECT, related_name="messages_sender"
     )
-    group = models.ForeignKey(Group, on_delete=models.PROTECT)
+    group = models.ForeignKey(ChatGroup, on_delete=models.PROTECT)
 
     # signal will create ThreadRead automatically for user
 
 
 class ThreadRead(BaseModelWithUID):
     thread = models.ForeignKey(Thread, on_delete=models.PROTECT)
-    group = models.ForeignKey(Group, on_delete=models.PROTECT)
+    group = models.ForeignKey(ChatGroup, on_delete=models.PROTECT)
     user = models.ForeignKey(User, on_delete=models.PROTECT)
     is_read = models.BooleanField(default=False)
