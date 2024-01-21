@@ -1,0 +1,149 @@
+{
+	"info": {
+		"_postman_id": "f6e678ff-0dff-4a4a-8809-41da99810a94",
+		"name": "octous",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "6903858",
+		"_collection_link": "https://bold-trinity-911409.postman.co/workspace/New-Team-Workspace~a2f135e2-bb88-4eb3-b839-1fbde17d4c51/collection/6903858-f6e678ff-0dff-4a4a-8809-41da99810a94?action=share&source=collection_link&creator=6903858"
+	},
+	"item": [
+		{
+			"name": "groups",
+			"item": [
+				{
+					"name": "group list",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/v1/groups",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"groups"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "group create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "desciption",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "banner_image",
+									"type": "file",
+									"src": "/home/saifullah/Pictures/banner.png"
+								},
+								{
+									"key": "is_group",
+									"value": "true",
+									"type": "text"
+								},
+								{
+									"key": "participants_phone_numbers",
+									"value": "['+8801521475690']",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/api/v1/groups",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"groups"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "chats",
+			"item": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"pm.sendRequest({",
+					"    url: pm.collectionVariables.get('url') + \"/api/token\",",
+					"    method: \"POST\",",
+					"    body: {",
+					"        mode: 'raw',",
+					"        raw: JSON.stringify({ phone: \"+8801752495467\", password: \"123456\" })",
+					"    },",
+					"    header: {",
+					"        'Accept': '*/*',",
+					"        'Content-Type': 'application/json',",
+					"    },",
+					"},function (err, res) {",
+					"    try {",
+					"        pm.collectionVariables.set(\"token\", res.json().access)",
+					"    } catch(e) {",
+					"        console.log(e)",
+					"    }",
+					"",
+					"})",
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "url",
+			"value": "http://127.0.0.1:8000",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
