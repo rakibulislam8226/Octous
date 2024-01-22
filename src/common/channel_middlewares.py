@@ -1,10 +1,12 @@
-from channels.db import database_sync_to_async
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser
+from django.conf import settings
+
+from channels.db import database_sync_to_async
 from channels.middleware import BaseMiddleware
 from channels.auth import AuthMiddlewareStack
+
 from jwt import decode as jwt_decode
-from django.conf import settings
 
 User = get_user_model()
 
