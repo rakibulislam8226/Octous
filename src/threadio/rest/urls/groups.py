@@ -3,7 +3,7 @@ from ..views import groups
 
 urlpatterns = [
     path(
-        "/<uuid:uid>/chats",
+        "/<uuid:chat_group_uid>/threads",
         groups.PrivateGroupChatList.as_view(),
         name="group-chat-list",
     ),
