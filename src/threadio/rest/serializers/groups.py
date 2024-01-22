@@ -109,13 +109,19 @@ class GroupListSerializer(serializers.ModelSerializer):
 
 
 class PrivateThreadListSerializer(serializers.ModelSerializer):
+    image = VersatileImageFieldSerializer(
+        sizes=versatile_image_size,
+        required=False,
+        allow_null=True,
+        allow_empty_file=True,
+        write_only=True,
+    )
+    file = serializers.FileField(allow_empty_file=True, allow_null=True, required=False)
+    media_room = MediaRoomSerializer(read_only=True)
+
     class Meta:
         model = Thread
-        fields = [
-            "uid",
-            "content",
-            "file",
-        ]
+        fields = ["uid", "content", "file", "image", "media_room"]
         read_only_fields = ["uid"]
 
     def validate(self, attrs):
@@ -135,3 +141,13 @@ class PrivateThreadListSerializer(serializers.ModelSerializer):
         attrs["group"] = group
         attrs["sender"] = logged_in_user
         return attrs
+
+    def create(self, validated_data):
+        file = validated_data.pop("file", None)
+        image = validated_data.pop("image", None)
+        if not (image is None and file is None):
+            validated_data["media_room"] = MediaRoom.objects.create(
+                file=file, image=image
+            )
+
+        return super().create(validated_data)

@@ -2,8 +2,11 @@ from autoslug import AutoSlugField
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.db.models import UniqueConstraint, Q
+from versatileimagefield.fields import VersatileImageField
+from versatileimagefield.serializers import VersatileImageFieldSerializer
 
 from common.models import BaseModelWithUID
+from common.variable import versatile_image_size
 from threadio.choices import (
     GroupChoices,
     GroupParticipantChoices,
@@ -71,7 +74,9 @@ class ChatGroupParticipant(BaseModelWithUID):
 
 class Thread(BaseModelWithUID):
     content = models.TextField(blank=True)
-    file = models.FileField(upload_to="messages/", blank=True, null=True)
+    media_room = models.ForeignKey(
+        "mediaroomio.MediaRoom", on_delete=models.PROTECT, null=True, blank=True
+    )
 
     # FK
     sender = models.ForeignKey(
@@ -87,6 +92,8 @@ class Thread(BaseModelWithUID):
 
 class ThreadRead(BaseModelWithUID):
     thread = models.ForeignKey(Thread, on_delete=models.PROTECT)
-    group = models.ForeignKey(ChatGroup, on_delete=models.PROTECT)
+    group = models.ForeignKey(
+        ChatGroup, on_delete=models.PROTECT, blank=True, null=True
+    )
     user = models.ForeignKey(User, on_delete=models.PROTECT)
     is_read = models.BooleanField(default=False)

@@ -35,3 +35,13 @@ def send_thread_message_to_channel_group(sender, instance: Thread, **kwargs):
     )
 
     print(channel_layer)
+
+
+@receiver(post_save, sender=ThreadRead)
+def send_thread_message_to_channel_group(
+    sender, instance: ThreadRead, created, **kwargs
+):
+    if created:
+        if instance.group is None or not instance.group:
+            instance.group = instance.thread.group
+            instance.save_dirty_fields()
