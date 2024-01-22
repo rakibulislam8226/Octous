@@ -1,6 +1,4 @@
-from channels.generic.websocket import (
-    AsyncWebsocketConsumer,
-)
+from channels.generic.websocket import AsyncWebsocketConsumer
 from rest_framework.exceptions import NotFound
 
 from threadio.models import ChatGroup
