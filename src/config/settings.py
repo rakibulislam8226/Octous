@@ -73,6 +73,7 @@ THIRD_PARTY_APPS = [
     "simple_history",
     "axes",
     "drf_spectacular",
+    "versatileimagefield",
 ]
 
 PROJECT_APPS = [

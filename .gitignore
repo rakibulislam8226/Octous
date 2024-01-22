@@ -19,3 +19,7 @@ src/media
 src/media/*
 identifier.sqlite
 src/db.sqlite3
+src/static
+src/static/*
+src/staticfiles
+src/staticfiles/*
