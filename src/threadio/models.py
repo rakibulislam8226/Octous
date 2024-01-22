@@ -78,6 +78,9 @@ class Thread(BaseModelWithUID):
         User, on_delete=models.PROTECT, related_name="messages_sender"
     )
     group = models.ForeignKey(ChatGroup, on_delete=models.PROTECT)
+    parent = models.ForeignKey(
+        "self", on_delete=models.PROTECT, related_name="replies", null=True, blank=True
+    )
 
     # signal will create ThreadRead automatically for user
 

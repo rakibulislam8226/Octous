@@ -11,7 +11,7 @@ from core.rest.serializers.users import UserMinSerializer
 from mediaroomio.models import MediaRoom
 from mediaroomio.rest.serializers.media import MediaRoomSerializer
 from threadio.choices import GroupParticipantRoleChoices, GroupParticipantChoices
-from threadio.models import ChatGroup, ChatGroupParticipant
+from threadio.models import ChatGroup, ChatGroupParticipant, Thread
 
 
 class GroupListSerializer(serializers.ModelSerializer):
@@ -106,3 +106,32 @@ class GroupListSerializer(serializers.ModelSerializer):
         )
 
         return instance
+
+
+class PrivateThreadListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Thread
+        fields = [
+            "uid",
+            "content",
+            "file",
+        ]
+        read_only_fields = ["uid"]
+
+    def validate(self, attrs):
+        logged_in_user = self.context["request"].user
+        group = self.context["view"].kwargs.get("chat_group_uid", None)
+
+        if group is None:
+            raise ValidationError({"detail": "Group uuid is required."})
+
+        group_uid = self.context["view"].kwargs.get("chat_group_uid")
+
+        # check if user have permission to this group chat or not
+        group = ChatGroup.objects.get(uid=group_uid)
+        if not group.chatgroupparticipant_set.filter(user=logged_in_user).exists():
+            raise ValidationError({"detail": "You do not have any permission."})
+
+        attrs["group"] = group
+        attrs["sender"] = logged_in_user
+        return attrs

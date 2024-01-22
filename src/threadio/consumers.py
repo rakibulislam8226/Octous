@@ -21,7 +21,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 "chatgroupparticipant_set"
             ).aget(uid=self.scope["url_route"]["kwargs"]["group_uid"])
             self.group_name = "chat" + str(group.uid)
-            print("hello ", self.group_name)
+
             await self.channel_layer.group_add(self.group_name, self.channel_name)
 
             if not await group.chatgroupparticipant_set.filter(
