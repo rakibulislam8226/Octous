@@ -100,6 +100,9 @@ class Thread(BaseModelWithUID):
     class Meta:
         ordering = ["-created_at"]
 
+    def __str__(self):
+        return f"UID: {self.uid} Content: {self.content[:20]}"
+
     # signal will create ThreadRead automatically for user
 
 

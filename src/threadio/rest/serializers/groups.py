@@ -168,7 +168,9 @@ class PrivateThreadListSerializer(serializers.ModelSerializer):
         allow_empty_file=True,
         write_only=True,
     )
-    file = serializers.FileField(allow_empty_file=True, allow_null=True, required=False)
+    file = serializers.FileField(
+        allow_empty_file=True, allow_null=True, required=False, write_only=True
+    )
     media_room = MediaRoomSerializer(read_only=True)
     replies = RecursiveThreadSerializer(many=True, read_only=True)
     parent = serializers.SlugRelatedField(
