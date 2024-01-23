@@ -7,18 +7,20 @@ from threadio.choices import GroupParticipantChoices
 from threadio.models import Thread, ThreadRead, ChatGroupParticipant
 
 
-@receiver(post_save, sender=Thread)
-def create_thread_users_after_sending_thread(sender, instance, created, **kwargs):
-    if created:
-        ThreadRead.objects.bulk_create(
-            [
-                ThreadRead(thread=instance, user=group_participant.user)
-                for group_participant in ChatGroupParticipant.objects.filter(
-                    group=instance.group
-                ).all()
-                if group_participant.status == GroupParticipantChoices.ACTIVE
-            ]
-        )
+# @receiver(post_save, sender=Thread)
+# def create_thread_users_after_sending_thread(sender, instance, created, **kwargs):
+#     if created:
+#         print("created ", instance)
+#
+#         bulk_data = [
+#             ThreadRead(
+#                 thread=instance, user=group_participant.user, group=instance.group
+#             )
+#             for group_participant in ChatGroupParticipant.objects.filter(
+#                 group=instance.group, status=GroupParticipantChoices.ACTIVE
+#             ).all()
+#         ]
+#         ThreadRead.objects.bulk_create(bulk_data)
 
 
 # @receiver(post_save, sender=Thread)
