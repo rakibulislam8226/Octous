@@ -1,10 +1,12 @@
 import json
 
+from django.db.models import Case, When, Value, BooleanField
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
 from versatileimagefield.serializers import VersatileImageFieldSerializer
 
+from account.rest.serializers.users import UserMinReadOnlySerializer
 from common.variable import versatile_image_size
 from core.choices import UserStatus
 from core.models import User
@@ -12,7 +14,7 @@ from core.rest.serializers.users import UserMinSerializer
 from mediaroomio.models import MediaRoom
 from mediaroomio.rest.serializers.media import MediaRoomSerializer
 from threadio.choices import GroupParticipantRoleChoices, GroupParticipantChoices
-from threadio.models import ChatGroup, ChatGroupParticipant, Thread
+from threadio.models import ChatGroup, ChatGroupParticipant, Thread, ThreadRead
 
 
 class GroupListSerializer(serializers.ModelSerializer):
@@ -115,6 +117,11 @@ class ThreadSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class ThreadReadMinReadOnlySerializer(serializers.Serializer):
+    is_read = serializers.BooleanField(read_only=True)
+    user = UserMinReadOnlySerializer(read_only=True)
+
+
 class RecursiveThreadSerializer(serializers.Serializer):
     def to_representation(self, instance):
         serializer = PrivateThreadListSerializer(instance, context=self.context)
@@ -165,12 +172,32 @@ class PrivateThreadListSerializer(serializers.ModelSerializer):
     media_room = MediaRoomSerializer(read_only=True)
     replies = RecursiveThreadSerializer(many=True, read_only=True)
     parent = serializers.SlugRelatedField(
-        queryset=Thread.objects.filter(), slug_field="uid"
+        queryset=Thread.objects.filter(),
+        slug_field="uid",
+        required=False,
+        allow_null=True,
+        allow_empty=True,
     )
+    sender = UserMinReadOnlySerializer(read_only=True)
+    is_read = serializers.BooleanField(default=False, read_only=True)
+    read_users = ThreadReadMinReadOnlySerializer(many=True, read_only=True)
 
     class Meta:
         model = Thread
-        fields = ["uid", "content", "file", "image", "media_room", "replies", "parent"]
+        fields = [
+            "uid",
+            "content",
+            "file",
+            "image",
+            "media_room",
+            "replies",
+            "parent",
+            "sender",
+            "is_read",
+            "created_at",
+            "updated_at",
+            "read_users",
+        ]
         read_only_fields = ["uid"]
 
     def to_representation(self, instance):
@@ -204,9 +231,26 @@ class PrivateThreadListSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         file = validated_data.pop("file", None)
         image = validated_data.pop("image", None)
+        user = self.context["request"].user
         if not (image is None and file is None):
             validated_data["media_room"] = MediaRoom.objects.create(
                 file=file, image=image
             )
 
-        return super().create(validated_data)
+        instance: Thread = super().create(validated_data)
+
+        bulk_data = [
+            ThreadRead(
+                thread=instance,
+                user=group_participant.user,
+                group=instance.group,
+                is_read=True if group_participant.user == user else False,
+            )
+            for group_participant in ChatGroupParticipant.objects.filter(
+                group=instance.group, status=GroupParticipantChoices.ACTIVE
+            ).all()
+        ]
+        ThreadRead.objects.bulk_create(bulk_data)
+
+        instance.is_read = instance.threadread_set.get(user=user).is_read
+        return instance
