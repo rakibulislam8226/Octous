@@ -1,9 +1,9 @@
 import uuid
 
-from dirtyfields import DirtyFieldsMixin
 from django.db import models
 from django.utils import timezone
 
+from dirtyfields import DirtyFieldsMixin
 
 class SoftDeleteManager(models.Manager):
     def get_queryset(self):

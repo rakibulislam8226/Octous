@@ -2,6 +2,7 @@ import json
 
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
+
 from versatileimagefield.serializers import VersatileImageFieldSerializer
 
 from common.variable import versatile_image_size

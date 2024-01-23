@@ -1,7 +1,8 @@
-from autoslug import AutoSlugField
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.db.models import UniqueConstraint, Q
+
+from autoslug import AutoSlugField
 from versatileimagefield.fields import VersatileImageField
 from versatileimagefield.serializers import VersatileImageFieldSerializer
 

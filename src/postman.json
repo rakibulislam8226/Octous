@@ -1,10 +1,9 @@
 {
 	"info": {
-		"_postman_id": "f6e678ff-0dff-4a4a-8809-41da99810a94",
+		"_postman_id": "162bc869-3e09-4c59-b972-95ac0ef90afb",
 		"name": "octous",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "6903858",
-		"_collection_link": "https://bold-trinity-911409.postman.co/workspace/New-Team-Workspace~a2f135e2-bb88-4eb3-b839-1fbde17d4c51/collection/6903858-f6e678ff-0dff-4a4a-8809-41da99810a94?action=share&source=collection_link&creator=6903858"
+		"_exporter_id": "16109722"
 	},
 	"item": [
 		{
@@ -39,7 +38,7 @@
 							"formdata": [
 								{
 									"key": "name",
-									"value": "",
+									"value": "Mr Checking",
 									"type": "text"
 								},
 								{
@@ -59,7 +58,7 @@
 								},
 								{
 									"key": "participants_phone_numbers",
-									"value": "['+8801521475690']",
+									"value": "['+8801521475690', '+8801776068226']",
 									"type": "text"
 								}
 							]
@@ -82,7 +81,122 @@
 		},
 		{
 			"name": "chats",
-			"item": []
+			"item": [
+				{
+					"name": "chat",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/v1/groups/cd78d5c0-f9db-4359-acda-ba8c084b0674/threads",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"groups",
+								"cd78d5c0-f9db-4359-acda-ba8c084b0674",
+								"threads"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "chatting",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "content",
+								"value": "hello",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "message",
+								"value": "hello",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "file",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "content",
+									"value": "how are you?",
+									"type": "text"
+								},
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/home/rakib/Downloads/about_me.txt",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/v1/groups/cd78d5c0-f9db-4359-acda-ba8c084b0674/threads",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"groups",
+								"cd78d5c0-f9db-4359-acda-ba8c084b0674",
+								"threads"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "token",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"phone\": \"+8801776068226\",\n    \"password\": \"ad\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/token",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"token"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"auth": {
@@ -106,7 +220,7 @@
 					"    method: \"POST\",",
 					"    body: {",
 					"        mode: 'raw',",
-					"        raw: JSON.stringify({ phone: \"+8801752495467\", password: \"123456\" })",
+					"        raw: JSON.stringify({ phone: \"+8801776068226\", password: \"ad\" })",
 					"    },",
 					"    header: {",
 					"        'Accept': '*/*',",

@@ -5,6 +5,7 @@ from channels.generic.websocket import (
     AsyncWebsocketConsumer,
 )
 from django.db.models import Prefetch
+from channels.generic.websocket import AsyncWebsocketConsumer
 from rest_framework.exceptions import NotFound
 
 from threadio.models import ChatGroup, Thread
