@@ -20,21 +20,21 @@ def create_thread_users_after_sending_thread(sender, instance, created, **kwargs
         )
 
 
-@receiver(post_save, sender=Thread)
-def send_thread_message_to_channel_group(sender, instance: Thread, **kwargs):
-    from channels.layers import get_channel_layer
-
-    channel_layer = get_channel_layer()
-    async_to_sync(channel_layer.group_send)(
-        "chat" + str(instance.group.uid),
-        {
-            "type": "chat.message",
-            "message": instance.content,
-            "room_id": str(instance.group.uid),
-        },
-    )
-
-    print(channel_layer)
+# @receiver(post_save, sender=Thread)
+# def send_thread_message_to_channel_group(sender, instance: Thread, **kwargs):
+#     from channels.layers import get_channel_layer
+#
+#     channel_layer = get_channel_layer()
+#     async_to_sync(channel_layer.group_send)(
+#         "chat" + str(instance.group.uid),
+#         {
+#             "type": "chat.message",
+#             "message": instance,
+#             "room_id": str(instance.group.uid),
+#         },
+#     )
+#
+#     print(channel_layer)
 
 
 @receiver(post_save, sender=ThreadRead)

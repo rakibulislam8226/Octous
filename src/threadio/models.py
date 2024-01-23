@@ -29,7 +29,10 @@ class ChatGroup(BaseModelWithUID):
     )
     created_by = models.ForeignKey(User, on_delete=models.PROTECT)
     status = models.CharField(
-        max_length=20, choices=GroupChoices.choices, default=GroupChoices.ACTIVE
+        max_length=20,
+        choices=GroupChoices.choices,
+        default=GroupChoices.ACTIVE,
+        db_index=True,
     )
     is_need_approval = models.BooleanField(default=False)
     disable_till = models.DateTimeField(
@@ -54,12 +57,13 @@ class ChatGroup(BaseModelWithUID):
 
 
 class ChatGroupParticipant(BaseModelWithUID):
-    group = models.ForeignKey(ChatGroup, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.RESTRICT)
+    group = models.ForeignKey(ChatGroup, on_delete=models.CASCADE, db_index=True)
+    user = models.ForeignKey(User, on_delete=models.RESTRICT, db_index=True)
     status = models.CharField(
         max_length=20,
         choices=GroupParticipantChoices.choices,
         default=GroupParticipantChoices.PENDING,
+        db_index=True,
     )
     role = models.TextField(
         max_length=20,
@@ -82,18 +86,26 @@ class Thread(BaseModelWithUID):
     sender = models.ForeignKey(
         User, on_delete=models.PROTECT, related_name="messages_sender"
     )
-    group = models.ForeignKey(ChatGroup, on_delete=models.PROTECT)
+    group = models.ForeignKey(ChatGroup, on_delete=models.PROTECT, db_index=True)
     parent = models.ForeignKey(
-        "self", on_delete=models.PROTECT, related_name="replies", null=True, blank=True
+        "self",
+        on_delete=models.PROTECT,
+        related_name="replies",
+        null=True,
+        blank=True,
+        db_index=True,
     )
+
+    class Meta:
+        ordering = ["-created_at"]
 
     # signal will create ThreadRead automatically for user
 
 
 class ThreadRead(BaseModelWithUID):
-    thread = models.ForeignKey(Thread, on_delete=models.PROTECT)
+    thread = models.ForeignKey(Thread, on_delete=models.PROTECT, db_index=True)
     group = models.ForeignKey(
         ChatGroup, on_delete=models.PROTECT, blank=True, null=True
     )
     user = models.ForeignKey(User, on_delete=models.PROTECT)
-    is_read = models.BooleanField(default=False)
+    is_read = models.BooleanField(default=False, db_index=True)

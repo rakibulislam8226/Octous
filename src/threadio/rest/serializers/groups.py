@@ -108,7 +108,28 @@ class GroupListSerializer(serializers.ModelSerializer):
         return instance
 
 
-class PrivateThreadListSerializer(serializers.ModelSerializer):
+class ThreadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Thread
+        fields = "__all__"
+
+
+class RecursiveThreadSerializer(serializers.Serializer):
+    def to_representation(self, instance):
+        serializer = PrivateThreadListSerializer(instance, context=self.context)
+        data = serializer.data
+
+        # Check if the instance has replies
+        if instance.replies.exists():
+            replies_serializer = self.__class__(
+                instance.replies.all(), many=True, context=self.context
+            )
+            data["replies"] = replies_serializer.data
+
+        return data
+
+
+class PrivateThreadParentListSerializer(serializers.ModelSerializer):
     image = VersatileImageFieldSerializer(
         sizes=versatile_image_size,
         required=False,
@@ -121,8 +142,45 @@ class PrivateThreadListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Thread
-        fields = ["uid", "content", "file", "image", "media_room"]
+        fields = [
+            "uid",
+            "content",
+            "file",
+            "image",
+            "media_room",
+        ]
         read_only_fields = ["uid"]
+
+
+class PrivateThreadListSerializer(serializers.ModelSerializer):
+    image = VersatileImageFieldSerializer(
+        sizes=versatile_image_size,
+        required=False,
+        allow_null=True,
+        allow_empty_file=True,
+        write_only=True,
+    )
+    file = serializers.FileField(allow_empty_file=True, allow_null=True, required=False)
+    media_room = MediaRoomSerializer(read_only=True)
+    replies = RecursiveThreadSerializer(many=True, read_only=True)
+    parent = serializers.SlugRelatedField(
+        queryset=Thread.objects.filter(), slug_field="uid"
+    )
+
+    class Meta:
+        model = Thread
+        fields = ["uid", "content", "file", "image", "media_room", "replies", "parent"]
+        read_only_fields = ["uid"]
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        print()
+        data["parent"] = (
+            PrivateThreadParentListSerializer(instance.parent).data
+            if instance.parent
+            else None
+        )
+        return data
 
     def validate(self, attrs):
         logged_in_user = self.context["request"].user

@@ -15,9 +15,11 @@ class BaseModelWithUID(DirtyFieldsMixin, models.Model):
         db_index=True, unique=True, default=uuid.uuid4, editable=False
     )
 
-    created_at = models.DateTimeField(default=timezone.now, editable=False)
+    created_at = models.DateTimeField(
+        default=timezone.now, editable=False, db_index=True
+    )
     updated_at = models.DateTimeField(blank=True, null=True)
-    is_deleted = models.BooleanField(default=False)
+    is_deleted = models.BooleanField(default=False, db_index=True)
     deleted_at = models.DateTimeField(null=True, blank=True)
 
     objects = SoftDeleteManager()
