@@ -1,20 +1,25 @@
+import json
+
+from asgiref.sync import sync_to_async
+from channels.generic.websocket import (
+    AsyncWebsocketConsumer,
+)
+from django.db.models import Prefetch
 from channels.generic.websocket import AsyncWebsocketConsumer
 from rest_framework.exceptions import NotFound
 
-from threadio.models import ChatGroup
+from threadio.models import ChatGroup, Thread
+from threadio.rest.serializers.groups import PrivateThreadListSerializer
 
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         try:
-            print(self.scope["user"])
             if not self.scope["user"].is_authenticated:
-                raise NotFound("No user authenticated user found.")
-
-            print("Connected to ChatConsumer")
+                await self.close()
 
             group: ChatGroup = await ChatGroup.objects.prefetch_related(
-                "chatgroupparticipant_set"
+                "chatgroupparticipant_set",
             ).aget(uid=self.scope["url_route"]["kwargs"]["group_uid"])
             self.group_name = "chat" + str(group.uid)
 
@@ -23,7 +28,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             if not await group.chatgroupparticipant_set.filter(
                 user=self.scope["user"]
             ).aexists():
-                raise NotFound("No active participant found.")
+                await self.close()
 
         except Exception as _:
             await self.close()
@@ -38,14 +43,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
             self.group_name,
             {
                 "type": "chat.message",
-                "message": text_data["message"],
+                "data": text_data,
                 "room_id": self.group_name,
             },
         )
 
     async def chat_message(self, event):
         print("asdf ", event, type(event))
-        await self.send(event["message"])
+        await self.send(json.dumps(event["data"]))
 
     async def disconnect(self, close_code):
         print("disconnected")
