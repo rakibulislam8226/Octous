@@ -1,9 +1,12 @@
-from django.db.models import Prefetch, Case, When, Value, BooleanField
+from django.db.models import Prefetch
 from django.utils import timezone
-from rest_framework import status
 
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+
+from rest_framework import status
 from rest_framework.exceptions import NotFound
-from rest_framework.generics import ListCreateAPIView, UpdateAPIView
+from rest_framework.generics import ListCreateAPIView
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -55,12 +58,7 @@ class PrivateGroupChatList(ListCreateAPIView):
         return group.thread_set.all()
 
     def create(self, request, *args, **kwargs):
-        from channels.layers import get_channel_layer
-        from asgiref.sync import async_to_sync
-
         response = super().create(request, *args, **kwargs)
-        print("sfasf ", response.data)
-
         channel_layer = get_channel_layer()
 
         async_to_sync(channel_layer.group_send)(
@@ -87,17 +85,11 @@ class PrivateGroupThreadReadNowList(APIView):
         except ChatGroup.DoesNotExist:
             raise NotFound(detail="Group not found")
         # chat last seen
-        print("last seend ", chat_group.chatgroupparticipant_set.filter(user=user))
         chat_group.chatgroupparticipant_set.filter(user=user).update(
             last_seen=timezone.now()
         )
 
         # read all messages
-        print(
-            "read all chat , ",
-            chat_group.id,
-            chat_group.threadread_set.filter(),
-        )
         chat_user_threads = chat_group.threadread_set.filter(user=user, is_read=False)
         if chat_user_threads.exists():
             chat_user_threads.update(is_read=True)
@@ -105,9 +97,6 @@ class PrivateGroupThreadReadNowList(APIView):
             user_serialized_data = UserMinReadOnlySerializer(
                 user, context={"request": self.request}
             ).data
-
-            from channels.layers import get_channel_layer
-            from asgiref.sync import async_to_sync
 
             channel_layer = get_channel_layer()
 
