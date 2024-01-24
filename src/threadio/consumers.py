@@ -48,7 +48,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await self.send(json.dumps(event["data"]))
 
     async def disconnect(self, close_code):
-        await self.close()
+        await self.channel_layer.group_discard(self.group_name, self.channel_name)
 
 
 class ChatLastMessageSeenByConsumer(AsyncWebsocketConsumer):
@@ -88,7 +88,7 @@ class ChatLastMessageSeenByConsumer(AsyncWebsocketConsumer):
         await self.send(json.dumps(event["data"]))
 
     async def disconnect(self, close_code):
-        await self.close()
+        await self.channel_layer.group_discard(self.group_name, self.channel_name)
 
 
 # consumers.py
