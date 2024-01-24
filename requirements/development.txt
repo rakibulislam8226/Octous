@@ -39,6 +39,7 @@ jsonschema-specifications==2023.7.1
 msgpack==1.0.7
 multidict==6.0.4
 mypy-extensions==1.0.0
+mysqlclient==2.2.1
 packaging==23.2
 pathspec==0.12.1
 phonenumbers==8.13.19
@@ -61,6 +62,7 @@ rpds-py==0.10.3
 service-identity==24.1.0
 six==1.16.0
 sqlparse==0.4.4
+tomli==2.0.1
 twilio==8.11.1
 Twisted==23.10.0
 txaio==23.1.1

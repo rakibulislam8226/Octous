@@ -46,6 +46,7 @@ class ChatGroup(BaseModelWithUID):
         User, through="threadio.ChatGroupParticipant", related_name="chat_groups"
     )
 
+    # FIXME: UniqueConstraint does not support for mariadb. Need to fix it.
     class Meta:
         constraints = [
             UniqueConstraint(
