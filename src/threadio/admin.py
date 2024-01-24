@@ -16,12 +16,20 @@ class ChatGroupParticipantInline(admin.TabularInline):
 @admin.register(Thread)
 class ThreadAdmin(admin.ModelAdmin):
     model = Thread
-    list_display = ("uid", "sender", "group")
+    list_display = (
+        "uid",
+        "sender",
+        "group",
+    )
     inlines = [ThreaReadInline]
 
 
 @admin.register(ChatGroup)
 class ChatGroupAdmin(admin.ModelAdmin):
     model = ChatGroup
-    list_display = ("uid", "name", "status")
+    list_display = (
+        "uid",
+        "name",
+        "status",
+    )
     inlines = [ChatGroupParticipantInline]
