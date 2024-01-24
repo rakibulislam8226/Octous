@@ -11,4 +11,8 @@ websocket_urlpatterns = [
         "ws/chat/<uuid:group_uid>/last-message-seen-by",
         consumers.ChatLastMessageSeenByConsumer.as_asgi(),
     ),
+    path(
+        "ws/call/<uuid:group_uid>",
+        consumers.GroupVoiceConsumer.as_asgi(),
+    ),
 ]
